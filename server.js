@@ -1,12 +1,13 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var consoleTable = require("console.table")
 
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
     password: "momofuku2020!",
-    database: "ice_creamDB"
+    database: "employee_trackerDB"
 });
 
 connection.connect(function(err) {
@@ -127,9 +128,122 @@ function employeeAdd () {
      let str = answer.employeeAdd;
      let firstAndLast = str.split(" ");
      console.log(firstAndLast);
-     let query = 
+     let query = "INSERT INTO employee (first_name, last_name) VALUES ?";
+     connection.query(query, [[firstAndLast]], function (err, res){
+       runSearch();
+     });
    })
 }
+
+function departmentAdd() {
+  inquirer
+   .prompt({
+     name: "departmentAdd",
+     type: "input",
+     message: ["To ADD a department, enter the new department name"]
+   })
+   .then(function (answer) {
+      console.log (answer);
+      let str = answer.employeeAdd;
+      let firstAndLast = str.split(" ");
+      console.log(firstAndLast);
+      let query = "INSERT INTO employee (first_name, last_name) VALUES ?";
+      connection.query(query, [[firstAndLast]], function (err, res){
+        runSearch();
+      });
+   })
+}
+
+function roleAdd() {
+  inquirer
+  .prompt({
+    name: "title",
+    type: "input",
+    message: ["Enter the new role name"]
+  })
+  .then(function (answer) {
+    let title = answer.title;
+
+    inquirer
+      .prompt({
+        name: "salary",
+        type: "input",
+        message: ["Enter the salary for the new role"]
+      })
+      .then(function (answer) {
+        let salary = answer.salary;
+
+        inquirer
+          .prompt({
+            name: "department_id",
+            type: "input",
+            message: ["Enter the department id for the new role"]
+          })
+          .then (function (answer) {
+            let department_id = answer.department_id;
+            console.log(`title:  ${title} salary: ${salary} department id: ${department_id}`);
+            let query = "INSERT INTO role (title, salary, department_id) VALUES ?";
+            connection.query(query, [[[title, salary, department_id]]], function (err, res) {
+              if (err) {
+                console.log(err);
+              }
+              runSearch();
+            });
+          })
+      })
+    })
+  }
+
+function employeeRemove() {
+  inquirer
+    .prompt({
+      name: "employeeRemove",
+      type: "input",
+      message: "To REMOVE an employee, enter their employee id",
+    })
+    .then(function (answer) {
+      console.log(answer);
+      let query = "DELETE FROM employee WHERE ?";
+      let newId = Number (answer.employeeRemove);
+      console.log(newId);
+      connection.query(query, { id: newId }, function (err, res) {
+        runSearch();
+      });
+    });
+}
+
+function roleUpdate() {
+  console.log(`updating employee`);
+    inquirer
+      .prompt({
+        name: "id",
+        type: "input",
+        message: "Enter employee id",
+      })
+      .then(function (answer) {
+        let id = answer.id;
+         inquirer
+           .prompt({
+             name: "roleId",
+             type: "input",
+             message: "Enter new role id",
+           })
+           .then(function (answer) {
+             let roleId = answer.roleId
+             let query = "UPDATE employee SET role_id=?";
+             connection.query(query, [roleId, id], function (err,res) {
+               if (err) {
+                 console.log(err);
+                }
+                runSearch();
+            });    
+        });
+      });
+}
+
+
+
+        
     
   
     
