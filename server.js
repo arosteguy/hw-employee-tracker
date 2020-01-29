@@ -87,11 +87,12 @@ function employeeView() {
     .then(function (answer) {
       let query = "SELECT first_name, last_name, id FROM employee WHERE ?";
       connection.query(query,{last_name: answer.employeeView}, function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-          console.log("First Name: " + res[i].first_name + " || Last name: " + res[i].last_name + " || Id: " + res[i].id);
-
-        }
-         runSearch();
+        // for (var i = 0; i < res.length; i++) {
+        //   console.log("First Name: " + res[i].first_name + " || Last name: " + res[i].last_name + " || Id: " + res[i].id);
+          
+        // }
+        console.table(res);
+        runSearch();
       } );
     });
 }
@@ -144,7 +145,7 @@ function departmentAdd() {
    })
    .then(function (answer) {
       console.log (answer);
-      let str = answer.employeeAdd;
+      let str = answer.departmentAdd;
       let firstAndLast = str.split(" ");
       console.log(firstAndLast);
       let query = "INSERT INTO employee (first_name, last_name) VALUES ?";
@@ -213,7 +214,6 @@ function employeeRemove() {
 }
 
 function roleUpdate() {
-  console.log(`updating employee`);
     inquirer
       .prompt({
         name: "id",
@@ -229,7 +229,7 @@ function roleUpdate() {
              message: "Enter new role id",
            })
            .then(function (answer) {
-             let roleId = answer.roleId
+             let roleId = answer.roleId;
              let query = "UPDATE employee SET role_id=?";
              connection.query(query, [roleId, id], function (err,res) {
                if (err) {
